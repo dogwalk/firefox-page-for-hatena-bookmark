@@ -2,6 +2,19 @@
 
 const isFirefoxAndroid = require('is-firefox-android')();
 const handleClick = require('./lib/handle-click');
+const { PageMod } = require('sdk/page-mod');
+const data = require('sdk/self').data;
+
+PageMod({// eslint-disable-line new-cap
+  include: '*',
+  contentScriptFile: data.url('content-script.js'),
+  attachTo: ['existing', 'top'],
+  onAttach: (worker) => {
+    worker.port.on('canonicalUrl', (request) => {
+      console.log(request);// eslint-disable-line no-console
+    });
+  },
+});
 
 if (isFirefoxAndroid) {
   const getWindow = require('get-firefox-browser-window');

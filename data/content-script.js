@@ -1,49 +1,20 @@
 /**
  * @license
- * lodash.escape 3.10.1 <https://lodash.com/>
- * and baseToString, reUnescapedHtml, reHasUnescapedHtml, htmlEscapes, escapeHtmlChar
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * http://upa-pc.blogspot.jp/2015/03/javascript-canonical-url-get.html
+ * Copyright © 2012-2015 Dr.ウーパ
+ *
+ * @return {?string} canonical url.
  */
-function baseToString(value) {
-  return value === null ? '' : (`${value}`);
-}
-const reUnescapedHtml = /[&<>"'`]/g;
-const reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
-
-const htmlEscapes = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  '\'': '&#39;',
-  '`': '&#96;',
-};
-
-function escapeHtmlChar(chr) {
-  return htmlEscapes[chr];
-}
-function escape(input) {
-  const string = baseToString(input);
-  return (string && reHasUnescapedHtml.test(string))
-    ? string.replace(reUnescapedHtml, escapeHtmlChar)
-    : string;
-}
-
-self.port.on('buildLinkHtml', () => {
+function browserCanonicalUrl() {
   'use strict';
-  const selected = window.getSelection().toString();
-  const title = window.document.title;
-  const url = window.location.href;
-  let result = '';
-  result += `<a href="${escape(url)}">`;
-  if (selected) {
-    result += escape(selected);
-  } else {
-    result += escape(title);
+  const links = document.getElementsByTagName('link');
+  const linksLength = links.length;
+  for (let i = 0; i < linksLength; i++) {
+    if (links[i].rel && links[i].rel.toLowerCase() === 'canonical') {
+      return links[i].href;
+    }
   }
-  result += '</a>';
-  self.port.emit('copyToSystem', result);
-});
+  return null;
+}
+const canonicalUrl = browserCanonicalUrl() || location.href;
+self.port.emit('canonicalUrl', canonicalUrl);
