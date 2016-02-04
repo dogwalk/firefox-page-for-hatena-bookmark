@@ -1,22 +1,12 @@
 {
-  "title": "My Jetpack Addon",
   "name": "firefox-page-for-hatena-bookmark",
-  "version": "0.0.1",
   "description": "A basic add-on",
-  "main": "index.js",
+  "version": "0.0.1",
   "author": {
     "name": "sanemat",
     "email": "o.gata.ken@gmail.com",
     "url": "sane.jp"
   },
-  "engines": {
-    "firefox": ">=38.0a1",
-    "fennec": ">=38.0a1"
-  },
-  "license": "MIT",
-  "keywords": [
-    "jetpack"
-  ],
   "dependencies": {
     "get-firefox-browser-window": "^2.0.0",
     "is-firefox-android": "^2.0.0"
@@ -38,6 +28,15 @@
     "rimraf": "^2.5.1",
     "yargs": "^3.32.0"
   },
+  "engines": {
+    "firefox": ">=38.0a1",
+    "fennec": ">=38.0a1"
+  },
+  "keywords": [
+    "jetpack"
+  ],
+  "license": "MIT",
+  "main": "index.js",
   "repository": "dogwalk/firefox-page-for-hatena-bookmark",
   "scripts": {
     "build:addon": "npm run build:clean && npm run build:copy && npm run build:install && npm run build:xpi",
@@ -57,5 +56,6 @@
     "start:mobile": "jpm-mobile run -b firefox",
     "test": "jpm test",
     "verify": "npm run lint && npm run test && npm run build:addon"
-  }
+  },
+  "title": "My Jetpack Addon"
 }
