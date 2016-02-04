@@ -4,7 +4,11 @@
   "version": "0.0.1",
   "description": "A basic add-on",
   "main": "index.js",
-  "author": "sanemat",
+  "author": {
+    "name": "sanemat",
+    "email": "o.gata.ken@gmail.com",
+    "url": "sane.jp"
+  },
   "engines": {
     "firefox": ">=38.0a1",
     "fennec": ">=38.0a1"
@@ -13,7 +17,45 @@
   "keywords": [
     "jetpack"
   ],
+  "dependencies": {
+    "get-firefox-browser-window": "^2.0.0",
+    "is-firefox-android": "^2.0.0"
+  },
   "devDependencies": {
-    "jpm": "^1.0.5"
+    "conventional-changelog": "^0.5.3",
+    "cpy": "^4.0.0",
+    "cross-spawn-async": "^2.1.8",
+    "eclint": "^1.1.5",
+    "eslint": "^1.10.3",
+    "eslint-config-airbnb": "^4.0.0",
+    "fixpack": "^2.2.0",
+    "globstar": "^1.0.0",
+    "jpm": "^1.0.5",
+    "jpm-mobile": "github:dogwalk/jpm-mobile#patched",
+    "mkdirp": "^0.5.1",
+    "npm-check-updates": "^2.5.7",
+    "pify": "^2.3.0",
+    "rimraf": "^2.5.1",
+    "yargs": "^3.32.0"
+  },
+  "repository": "dogwalk/firefox-page-for-hatena-bookmark",
+  "scripts": {
+    "build:addon": "npm run build:clean && npm run build:copy && npm run build:install && npm run build:xpi",
+    "build:clean": "bin/build-clean.js",
+    "build:copy": "bin/build-copy.js",
+    "build:install": "bin/build-install.js",
+    "build:xpi": "bin/build-xpi.js",
+    "changelog": "conventional-changelog -i changelog.md --overwrite --preset angular",
+    "eclint": "globstar --ignore \"node_modules/**\" -- eclint check \"*.{js,yml,md,json}\"",
+    "eslint": "eslint --ext .js data test index.js bin lib",
+    "fixpack": "fixpack",
+    "git:tag": "git tag v${npm_package_version}",
+    "lint": "npm run eclint && npm run eslint",
+    "ncu": "ncu -u",
+    "release": "npm run build:addon && ./bin/release-circleci.js",
+    "start": "jpm run",
+    "start:mobile": "jpm-mobile run -b firefox",
+    "test": "jpm test",
+    "verify": "npm run lint && npm run test && npm run build:addon"
   }
 }
