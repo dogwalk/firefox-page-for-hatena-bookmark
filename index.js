@@ -8,7 +8,7 @@ if (isFirefoxAndroid) {
   let menuId = 0;
   exports.main = (options, callback) => {// eslint-disable-line no-unused-vars
     menuId = getWindow().NativeWindow.menu.add({
-      name: 'Page for Hatebu',
+      name: 'Page for Hatebu (-)',
       callback: handleClick,
     });
   };
