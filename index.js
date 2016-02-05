@@ -11,8 +11,9 @@ PageMod({// eslint-disable-line new-cap
   attachTo: ['existing', 'top'],
   onAttach: (worker) => {
     worker.port.on('canonicalUrl', (request) => {
-      console.log(request);// eslint-disable-line no-console
+      console.log(`page-loaded: ${request}`);// eslint-disable-line no-console
     });
+    worker.port.emit('getCanonicalUrl');
   },
 });
 
