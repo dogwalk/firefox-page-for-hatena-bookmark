@@ -29,7 +29,8 @@ if (isFirefoxAndroid) {
       64: './bookmark42-64.png',
     },
     onClick: handleClick,
-    button: '',
+    badge: '',
+    badgeColor: '#696969',
   });
 }
 
