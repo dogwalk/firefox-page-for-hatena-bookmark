@@ -36,7 +36,10 @@ if (isFirefoxAndroid) {
 
 PageMod({// eslint-disable-line new-cap
   include: '*',
-  contentScriptFile: data.url('content-script.js'),
+  contentScriptFile: [
+    data.url('../node_modules/browser-canonical-url/build/browser-canonical-url.js'),
+    data.url('content-script.js'),
+  ],
   attachTo: ['existing', 'top'],
   onAttach: (worker) => {
     worker.port.on('canonicalUrl', (request) => {
