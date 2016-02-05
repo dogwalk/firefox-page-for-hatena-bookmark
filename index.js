@@ -3,6 +3,7 @@
 const isFirefoxAndroid = require('is-firefox-android')();
 const handleClick = require('./lib/handle-click');
 const { PageMod } = require('sdk/page-mod');
+const tabs = require('sdk/tabs');
 const data = require('sdk/self').data;
 let button;
 let menuId;
@@ -49,4 +50,18 @@ PageMod({// eslint-disable-line new-cap
     });
     worker.port.emit('getCanonicalUrl');
   },
+});
+
+tabs.on('activate', (tab) => {
+  const worker = tab.attach({
+    contentScriptFile: [
+      data.url('../node_modules/browser-canonical-url/build/browser-canonical-url.js'),
+      data.url('content-script.js'),
+    ],
+  });
+  worker.port.on('canonicalUrl', (request) => {
+    console.log(request);// eslint-disable-line no-console
+    button.badge = Math.floor(Math.random() * 50);
+  });
+  worker.port.emit('getCanonicalUrl');
 });
