@@ -4,18 +4,7 @@ const isFirefoxAndroid = require('is-firefox-android')();
 const handleClick = require('./lib/handle-click');
 const { PageMod } = require('sdk/page-mod');
 const data = require('sdk/self').data;
-
-PageMod({// eslint-disable-line new-cap
-  include: '*',
-  contentScriptFile: data.url('content-script.js'),
-  attachTo: ['existing', 'top'],
-  onAttach: (worker) => {
-    worker.port.on('canonicalUrl', (request) => {
-      console.log(`page-loaded: ${request}`);// eslint-disable-line no-console
-    });
-    worker.port.emit('getCanonicalUrl');
-  },
-});
+let button;
 
 if (isFirefoxAndroid) {
   const getWindow = require('get-firefox-browser-window');
@@ -31,7 +20,7 @@ if (isFirefoxAndroid) {
   };
 } else {
   const { ActionButton } = require('sdk/ui/button/action');
-  ActionButton({// eslint-disable-line new-cap
+  button = ActionButton({// eslint-disable-line new-cap
     id: 'page-for-hatena-bookmark',
     label: 'Page for Hatebu',
     icon: {
@@ -40,5 +29,19 @@ if (isFirefoxAndroid) {
       64: './bookmark42-64.png',
     },
     onClick: handleClick,
+    button: '',
   });
 }
+
+PageMod({// eslint-disable-line new-cap
+  include: '*',
+  contentScriptFile: data.url('content-script.js'),
+  attachTo: ['existing', 'top'],
+  onAttach: (worker) => {
+    worker.port.on('canonicalUrl', (request) => {
+      button.badge = 1;
+      console.log(`page-loaded: ${request}`);// eslint-disable-line no-console
+    });
+    worker.port.emit('getCanonicalUrl');
+  },
+});
