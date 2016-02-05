@@ -8,6 +8,7 @@ const data = require('sdk/self').data;
 let button;
 let menuId;
 let page;
+let currentUrl;
 
 if (isFirefoxAndroid) {
   const getWindow = require('get-firefox-browser-window');
@@ -62,7 +63,8 @@ tabs.on('activate', (tab) => {
     ],
   });
   worker.port.on('canonicalUrl', (request) => {
-    console.log(request);// eslint-disable-line no-console
+    currentUrl = request;
+    console.log(currentUrl);// eslint-disable-line no-console
     button.badge = Math.floor(Math.random() * 50);
   });
   worker.port.emit('getCanonicalUrl');
