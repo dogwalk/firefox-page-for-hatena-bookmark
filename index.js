@@ -5,10 +5,11 @@ const handleClick = require('./lib/handle-click');
 const { PageMod } = require('sdk/page-mod');
 const data = require('sdk/self').data;
 let button;
+let menuId;
 
 if (isFirefoxAndroid) {
   const getWindow = require('get-firefox-browser-window');
-  let menuId = 0;
+  menuId = 0;
   exports.main = (options, callback) => {// eslint-disable-line no-unused-vars
     menuId = getWindow().NativeWindow.menu.add({
       name: 'Page for Hatebu (-)',
