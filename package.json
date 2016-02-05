@@ -1,6 +1,6 @@
 {
   "name": "firefox-page-for-hatena-bookmark",
-  "description": "A basic add-on",
+  "description": "Show a detail page for Hatena Bookmark (http://b.hatena.ne.jp/). This is not official one.",
   "version": "0.0.1",
   "author": {
     "name": "sanemat",
@@ -57,5 +57,5 @@
     "test": "jpm test",
     "verify": "npm run lint && npm run test && npm run build:addon"
   },
-  "title": "My Jetpack Addon"
+  "title": "Page for Hatena Bookmark"
 }

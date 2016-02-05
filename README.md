@@ -2,7 +2,7 @@
 
 [![Travis-CI Status][travis-image]][travis-url] [![Daviddm Status][daviddm-image]][daviddm-url]
 
-> Page for Hatena Bookmark
+> Show a detail page for [Hatena Bookmark](http://b.hatena.ne.jp/). This is not official one.
 
 
 ## Note
