@@ -18,3 +18,6 @@ function browserCanonicalUrl() {
 }
 const canonicalUrl = browserCanonicalUrl() || location.href;
 self.port.emit('canonicalUrl', canonicalUrl);
+self.port.on('getCanonicalUrl', () => {
+  self.port.emit('canonicalUrl', canonicalUrl);
+});
