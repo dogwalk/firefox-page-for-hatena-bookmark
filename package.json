@@ -55,7 +55,8 @@
     "ncu": "ncu -u",
     "release": "npm run build:addon && ./bin/release-circleci.js",
     "start": "jpm run",
-    "start:mobile": "jpm-mobile run -b firefox & adb logcat | grep console",
+    "start:mobile": "jpm-mobile run -b firefox",
+    "start:mobile:unix": "jpm-mobile run -b firefox & adb logcat | grep console",
     "test": "jpm test",
     "verify": "npm run lint && npm run test && npm run build:addon"
   },
