@@ -7,9 +7,11 @@ const tabs = require('sdk/tabs');
 const data = require('sdk/self').data;
 const getWindow = require('get-firefox-browser-window');
 const { EventTarget } = require('sdk/event/target');
+const { Request } = require('sdk/request');
 const { emit } = require('sdk/event/core');
 const simpleStorage = require('sdk/simple-storage');
 const isNumber = require('lodash.isnumber');
+const buildHatenaBookmarkJsonLiteUrl = require('./lib/build-hatena-bookmark-json-lite-url');
 const target = EventTarget();// eslint-disable-line new-cap
 let button;
 let menuId;
@@ -38,7 +40,13 @@ target.on('updateBadge', (url, piece) => {
 });
 
 function cachedCount(bookmarks, url) {
-  if (!bookmarks || !url || !bookmarks[url] || !isNumber(bookmarks[url].count)) {
+  if (!bookmarks ||
+      !url ||
+      !bookmarks[url] ||
+      !bookmarks[url].updatedAt ||
+      bookmarks[url].updatedAt + 10 * 60 * 1000 < Date.now ||
+      !isNumber(bookmarks[url].count)
+  ) {
     return null;
   }
   return bookmarks[url].count;
@@ -46,11 +54,23 @@ function cachedCount(bookmarks, url) {
 
 target.on('pingUrl', (url) => {
   if (!url) { return; }
-  const count = cachedCount(simpleStorage.storage.bookmarks, url);
-  if (isNumber(count)) {
-    emit(target, 'updateBadge', url, count);
+  const cached = cachedCount(simpleStorage.storage.bookmarks, url);
+  if (isNumber(cached)) {
+    emit(target, 'updateBadge', url, cached);
   } else {
-    emit(target, 'updateBadge', url, Math.floor(Math.random() * 50));
+    emit(target, 'updateBadge', url, '-');
+    Request({// eslint-disable-line new-cap
+      url: buildHatenaBookmarkJsonLiteUrl(url),
+      onComplete: (response) => {
+        if (response.status !== 200) { return; }
+        const count = response.json.count;
+        simpleStorage.storage.bookmarks[url] = {
+          count,
+          updatedAt: Date.now(),
+        };
+        emit(target, 'updateBadge', url, count);
+      },
+    }).get();
   }
 });
 
