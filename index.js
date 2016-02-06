@@ -9,7 +9,7 @@ const getWindow = require('get-firefox-browser-window');
 let button;
 let menuId;
 let page;
-let currentUrl;
+let currentUrl;// eslint-disable-line no-unused-vars
 
 if (isFirefoxAndroid) {
   menuId = 0;
@@ -67,10 +67,13 @@ tabs.on('activate', (tab) => {
   });
   worker.port.on('canonicalUrl', (request) => {
     currentUrl = request;
-    console.log(currentUrl);// eslint-disable-line no-console
     const count = Math.floor(Math.random() * 50);
     if (isFirefoxAndroid) {
-      getWindow().NativeWindow.menu.update(menuId, { name: `Page for Hatebu (${count})`})
+      getWindow().NativeWindow.menu.update(
+        menuId,
+        {
+          name: `Page for Hatebu (${count})`,
+        });
     } else {
       button.badge = count;
     }
