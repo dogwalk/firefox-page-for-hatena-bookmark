@@ -63,7 +63,7 @@ target.on('pingUrl', (url) => {
       url: buildHatenaBookmarkJsonLiteUrl(url),
       onComplete: (response) => {
         if (response.status !== 200 || !response.json) { return; }
-        const count = response.json.count;
+        const count = Number(response.json.count);
         simpleStorage.storage.bookmarks[url] = {
           count,
           updatedAt: Date.now(),
