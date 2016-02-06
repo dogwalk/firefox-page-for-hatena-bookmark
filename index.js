@@ -53,7 +53,11 @@ function cachedCount(bookmarks, url) {
 }
 
 target.on('pingUrl', (url) => {
-  if (!url || !(/^http/.test(url))) { return; }
+  if (!url) { return; }
+  if (!(/^http/.test(url))) {
+    emit(target, 'updateBadge', url, '-');
+    return;
+  }
   const cached = cachedCount(simpleStorage.storage.bookmarks, url);
   if (isNumber(cached)) {
     emit(target, 'updateBadge', url, cached);
