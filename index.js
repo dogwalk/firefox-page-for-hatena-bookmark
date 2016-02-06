@@ -53,7 +53,7 @@ function cachedCount(bookmarks, url) {
 }
 
 target.on('pingUrl', (url) => {
-  if (!url) { return; }
+  if (!url || !(/^http/.test(url))) { return; }
   const cached = cachedCount(simpleStorage.storage.bookmarks, url);
   if (isNumber(cached)) {
     emit(target, 'updateBadge', url, cached);
@@ -62,7 +62,7 @@ target.on('pingUrl', (url) => {
     Request({// eslint-disable-line new-cap
       url: buildHatenaBookmarkJsonLiteUrl(url),
       onComplete: (response) => {
-        if (response.status !== 200) { return; }
+        if (response.status !== 200 || !response.json) { return; }
         const count = response.json.count;
         simpleStorage.storage.bookmarks[url] = {
           count,
