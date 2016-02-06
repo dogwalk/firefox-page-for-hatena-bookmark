@@ -49,7 +49,10 @@ page = PageMod({// eslint-disable-line new-cap
 
 page.on('attach', (worker) => {
   worker.port.on('canonicalUrl', (request) => {
-    button.badge = 1;
+    if (isFirefoxAndroid) {// eslint-disable-line no-empty
+    } else {
+      button.badge = 1;
+    }
     console.log(`page-loaded: ${request}`);// eslint-disable-line no-console
   });
   worker.port.emit('getCanonicalUrl');
@@ -65,7 +68,10 @@ tabs.on('activate', (tab) => {
   worker.port.on('canonicalUrl', (request) => {
     currentUrl = request;
     console.log(currentUrl);// eslint-disable-line no-console
-    button.badge = Math.floor(Math.random() * 50);
+    if (isFirefoxAndroid) {// eslint-disable-line no-empty
+    } else {
+      button.badge = Math.floor(Math.random() * 50);
+    }
   });
   worker.port.emit('getCanonicalUrl');
 });
