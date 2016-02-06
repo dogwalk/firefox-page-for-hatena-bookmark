@@ -5,14 +5,13 @@ const handleClick = require('./lib/handle-click');
 const { PageMod } = require('sdk/page-mod');
 const tabs = require('sdk/tabs');
 const data = require('sdk/self').data;
+const getWindow = require('get-firefox-browser-window');
 let button;
 let menuId;
 let page;
 let currentUrl;
-let getWindow;
 
 if (isFirefoxAndroid) {
-  getWindow = require('get-firefox-browser-window');
   menuId = 0;
   exports.main = (options, callback) => {// eslint-disable-line no-unused-vars
     menuId = getWindow().NativeWindow.menu.add({
@@ -70,7 +69,7 @@ tabs.on('activate', (tab) => {
     currentUrl = request;
     console.log(currentUrl);// eslint-disable-line no-console
     const count = Math.floor(Math.random() * 50);
-    if (isFirefoxAndroid) {// eslint-disable-line no-empty
+    if (isFirefoxAndroid) {
       getWindow().NativeWindow.menu.update(menuId, { name: `Page for Hatebu (${count})`})
     } else {
       button.badge = count;
