@@ -9,9 +9,10 @@ let button;
 let menuId;
 let page;
 let currentUrl;
+let getWindow;
 
 if (isFirefoxAndroid) {
-  const getWindow = require('get-firefox-browser-window');
+  getWindow = require('get-firefox-browser-window');
   menuId = 0;
   exports.main = (options, callback) => {// eslint-disable-line no-unused-vars
     menuId = getWindow().NativeWindow.menu.add({
@@ -68,9 +69,11 @@ tabs.on('activate', (tab) => {
   worker.port.on('canonicalUrl', (request) => {
     currentUrl = request;
     console.log(currentUrl);// eslint-disable-line no-console
+    const count = Math.floor(Math.random() * 50);
     if (isFirefoxAndroid) {// eslint-disable-line no-empty
+      getWindow().NativeWindow.menu.update(menuId, { name: `Page for Hatebu (${count})`})
     } else {
-      button.badge = Math.floor(Math.random() * 50);
+      button.badge = count;
     }
   });
   worker.port.emit('getCanonicalUrl');
