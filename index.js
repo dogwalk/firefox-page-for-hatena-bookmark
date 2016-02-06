@@ -37,15 +37,20 @@ target.on('updateBadge', (url, piece) => {
   }
 });
 
+function cachedCount(bookmarks, url) {
+  if (!bookmarks || !url || !bookmarks[url] || !isNumber(bookmarks[url].count)) {
+    return null;
+  }
+  return bookmarks[url].count;
+}
+
 target.on('pingUrl', (url) => {
   if (!url) { return; }
-  if (simpleStorage.storage.bookmarks &&
-    simpleStorage.storage.bookmarks[url] &&
-    isNumber(simpleStorage.storage.bookmarks[url].count)) {
-    emit(target, 'updateBadge', url, simpleStorage.storage.bookmarks[url].count);
-  } else {
-    const count = Math.floor(Math.random() * 50);
+  const count = cachedCount(simpleStorage.storage.bookmarks, url);
+  if (isNumber(count)) {
     emit(target, 'updateBadge', url, count);
+  } else {
+    emit(target, 'updateBadge', url, Math.floor(Math.random() * 50));
   }
 });
 
@@ -88,7 +93,6 @@ page = PageMod({// eslint-disable-line new-cap
 page.on('attach', (worker) => {
   worker.port.on('canonicalUrl', (request) => {
     currentUrl = request;
-    console.log(`page-loaded: ${request}`);// eslint-disable-line no-console
     emit(target, 'pingUrl', request);
   });
   worker.port.emit('getCanonicalUrl');
@@ -103,7 +107,6 @@ tabs.on('activate', (tab) => {
   });
   worker.port.on('canonicalUrl', (request) => {
     currentUrl = request;
-    console.log(`activated: ${request}`);// eslint-disable-line no-console
     emit(target, 'pingUrl', request);
   });
   worker.port.emit('getCanonicalUrl');
