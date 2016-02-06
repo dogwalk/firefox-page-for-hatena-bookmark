@@ -8,11 +8,21 @@ const data = require('sdk/self').data;
 const getWindow = require('get-firefox-browser-window');
 const { EventTarget } = require('sdk/event/target');
 const { emit } = require('sdk/event/core');
+const simpleStorage = require('sdk/simple-storage');
+const isNumber = require('lodash.isnumber');
 const target = EventTarget();// eslint-disable-line new-cap
 let button;
 let menuId;
 let page;
 let currentUrl;// eslint-disable-line no-unused-vars
+
+/**
+  * bookmarks
+  * { url -> { updatedAt: time, count: number }}
+  */
+if (!simpleStorage.storage.bookmarks) {
+  simpleStorage.storage.bookmarks = {};
+}
 
 target.on('updateBadge', (piece) => {
   if (isFirefoxAndroid) {
@@ -23,6 +33,15 @@ target.on('updateBadge', (piece) => {
       });
   } else {
     button.badge = piece;
+  }
+});
+
+target.on('pingUrl', (url) => {
+  if (!url) { return; }
+  if (simpleStorage.storage.bookmarks &&
+    simpleStorage.storage.bookmarks[url] &&
+    isNumber(simpleStorage.storage.bookmarks[url].count)) {
+    emit(target, 'updateBadge', simpleStorage.storage.bookmarks[url].count);
   }
 });
 
