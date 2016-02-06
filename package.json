@@ -10,7 +10,8 @@
   "dependencies": {
     "browser-canonical-url": "^1.0.0",
     "get-firefox-browser-window": "^2.0.0",
-    "is-firefox-android": "^2.0.0"
+    "is-firefox-android": "^2.0.0",
+    "lodash.isnumber": "^3.0.3"
   },
   "devDependencies": {
     "conventional-changelog": "^0.5.3",
@@ -55,6 +56,7 @@
     "release": "npm run build:addon && ./bin/release-circleci.js",
     "start": "jpm run",
     "start:mobile": "jpm-mobile run -b firefox",
+    "start:mobile:unix": "jpm-mobile run -b firefox & adb logcat | grep console",
     "test": "jpm test",
     "verify": "npm run lint && npm run test && npm run build:addon"
   },
