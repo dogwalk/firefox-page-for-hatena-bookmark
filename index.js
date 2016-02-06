@@ -24,7 +24,8 @@ if (!simpleStorage.storage.bookmarks) {
   simpleStorage.storage.bookmarks = {};
 }
 
-target.on('updateBadge', (piece) => {
+target.on('updateBadge', (url, piece) => {
+  if (url !== currentUrl) { return; }
   if (isFirefoxAndroid) {
     getWindow().NativeWindow.menu.update(
       menuId,
@@ -41,7 +42,10 @@ target.on('pingUrl', (url) => {
   if (simpleStorage.storage.bookmarks &&
     simpleStorage.storage.bookmarks[url] &&
     isNumber(simpleStorage.storage.bookmarks[url].count)) {
-    emit(target, 'updateBadge', simpleStorage.storage.bookmarks[url].count);
+    emit(target, 'updateBadge', url, simpleStorage.storage.bookmarks[url].count);
+  } else {
+    const count = Math.floor(Math.random() * 50);
+    emit(target, 'updateBadge', url, count);
   }
 });
 
@@ -83,11 +87,9 @@ page = PageMod({// eslint-disable-line new-cap
 
 page.on('attach', (worker) => {
   worker.port.on('canonicalUrl', (request) => {
-    if (isFirefoxAndroid) {// eslint-disable-line no-empty
-    } else {
-      button.badge = 1;
-    }
+    currentUrl = request;
     console.log(`page-loaded: ${request}`);// eslint-disable-line no-console
+    emit(target, 'pingUrl', request);
   });
   worker.port.emit('getCanonicalUrl');
 });
@@ -101,8 +103,8 @@ tabs.on('activate', (tab) => {
   });
   worker.port.on('canonicalUrl', (request) => {
     currentUrl = request;
-    const count = Math.floor(Math.random() * 50);
-    emit(target, 'updateBadge', count);
+    console.log(`activated: ${request}`);// eslint-disable-line no-console
+    emit(target, 'pingUrl', request);
   });
   worker.port.emit('getCanonicalUrl');
 });
