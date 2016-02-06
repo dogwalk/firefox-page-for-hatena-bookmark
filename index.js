@@ -6,10 +6,25 @@ const { PageMod } = require('sdk/page-mod');
 const tabs = require('sdk/tabs');
 const data = require('sdk/self').data;
 const getWindow = require('get-firefox-browser-window');
+const { EventTarget } = require('sdk/event/target');
+const { emit } = require('sdk/event/core');
+const target = EventTarget();// eslint-disable-line new-cap
 let button;
 let menuId;
 let page;
 let currentUrl;// eslint-disable-line no-unused-vars
+
+target.on('updateBadge', (piece) => {
+  if (isFirefoxAndroid) {
+    getWindow().NativeWindow.menu.update(
+      menuId,
+      {
+        name: `Page for Hatebu (${piece})`,
+      });
+  } else {
+    button.badge = piece;
+  }
+});
 
 if (isFirefoxAndroid) {
   menuId = 0;
@@ -33,7 +48,7 @@ if (isFirefoxAndroid) {
       64: './bookmark42-64.png',
     },
     onClick: handleClick,
-    badge: '',
+    badge: '-',
     badgeColor: '#696969',
   });
 }
@@ -68,15 +83,7 @@ tabs.on('activate', (tab) => {
   worker.port.on('canonicalUrl', (request) => {
     currentUrl = request;
     const count = Math.floor(Math.random() * 50);
-    if (isFirefoxAndroid) {
-      getWindow().NativeWindow.menu.update(
-        menuId,
-        {
-          name: `Page for Hatebu (${count})`,
-        });
-    } else {
-      button.badge = count;
-    }
+    emit(target, 'updateBadge', count);
   });
   worker.port.emit('getCanonicalUrl');
 });
