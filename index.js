@@ -16,7 +16,7 @@ const target = EventTarget();// eslint-disable-line new-cap
 let button;
 let menuId;
 let page;
-let currentUrl;// eslint-disable-line no-unused-vars
+let currentUrl;
 
 /**
   * bookmarks
