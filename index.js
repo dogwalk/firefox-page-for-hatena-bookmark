@@ -35,7 +35,11 @@ target.on('updateBadge', (url, piece) => {
         name: `Page for Hatebu (${piece})`,
       });
   } else {
-    button.badge = piece;
+    if (isNumber(piece) && piece > 9999) {
+      button.badge = 9999;
+    } else {
+      button.badge = piece;
+    }
   }
 });
 
