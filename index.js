@@ -17,6 +17,7 @@ let button;
 let menuId;
 let page;
 let currentUrl;
+const expireThreshold = 10 * 60 * 1000;// 10 minutes
 
 /**
   * bookmarks
@@ -48,7 +49,7 @@ function cachedCount(bookmarks, url) {
       !url ||
       !bookmarks.has(url) ||
       !bookmarks.get(url).updatedAt ||
-      bookmarks.get(url).updatedAt + 10 * 60 * 1000 < Date.now ||
+      bookmarks.get(url).updatedAt + expireThreshold < Date.now ||
       !isNumber(bookmarks.get(url).count)
   ) {
     return null;
