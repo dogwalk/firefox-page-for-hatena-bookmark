@@ -63,6 +63,8 @@ function expireBookmarks(bookmarks, expireDuration = expireThreshold, referenceT
   }
 }
 
+expireBookmarks(simpleStorage.storage.bookmarks);
+
 function cachedCount(bookmarks, url) {
   if (!bookmarks ||
       !url ||
