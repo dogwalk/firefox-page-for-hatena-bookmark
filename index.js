@@ -20,10 +20,10 @@ let currentUrl;
 
 /**
   * bookmarks
-  * { url -> { updatedAt: time, count: number }}
+  * Map { url -> { updatedAt: time, count: number }}
   */
 if (!simpleStorage.storage.bookmarks) {
-  simpleStorage.storage.bookmarks = {};
+  simpleStorage.storage.bookmarks = new Map();
 }
 
 target.on('updateBadge', (url, piece) => {
@@ -46,14 +46,14 @@ target.on('updateBadge', (url, piece) => {
 function cachedCount(bookmarks, url) {
   if (!bookmarks ||
       !url ||
-      !bookmarks[url] ||
-      !bookmarks[url].updatedAt ||
-      bookmarks[url].updatedAt + 10 * 60 * 1000 < Date.now ||
-      !isNumber(bookmarks[url].count)
+      !bookmarks.has(url) ||
+      !bookmarks.get(url).updatedAt ||
+      bookmarks.get(url).updatedAt + 10 * 60 * 1000 < Date.now ||
+      !isNumber(bookmarks.get(url).count)
   ) {
     return null;
   }
-  return bookmarks[url].count;
+  return bookmarks.get(url).count;
 }
 
 target.on('pingUrl', (url) => {
@@ -74,10 +74,13 @@ target.on('pingUrl', (url) => {
     req.on('complete', (response) => {
       if (response.status !== 200 || !response.json) { return; }
       const count = Number(response.json.count);
-      simpleStorage.storage.bookmarks[url] = {
-        count,
-        updatedAt: Date.now(),
-      };
+      simpleStorage.storage.bookmarks.set(
+        url,
+        {
+          count,
+          updatedAt: Date.now(),
+        }
+      );
       emit(target, 'updateBadge', url, count);
     });
     req.get();
