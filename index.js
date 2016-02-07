@@ -63,18 +63,19 @@ target.on('pingUrl', (url) => {
     emit(target, 'updateBadge', url, cached);
   } else {
     emit(target, 'updateBadge', url, '-');
-    Request({// eslint-disable-line new-cap
+
+    const req = Request({// eslint-disable-line new-cap
       url: buildHatenaBookmarkJsonLiteUrl(url),
-      onComplete: (response) => {
-        if (response.status !== 200 || !response.json) { return; }
-        const count = Number(response.json.count);
-        simpleStorage.storage.bookmarks[url] = {
-          count,
-          updatedAt: Date.now(),
-        };
-        emit(target, 'updateBadge', url, count);
-      },
     }).get();
+    req.on('complete', (response) => {
+      if (response.status !== 200 || !response.json) { return; }
+      const count = Number(response.json.count);
+      simpleStorage.storage.bookmarks[url] = {
+        count,
+        updatedAt: Date.now(),
+      };
+      emit(target, 'updateBadge', url, count);
+    });
   }
 });
 
