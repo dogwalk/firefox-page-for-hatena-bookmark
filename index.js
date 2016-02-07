@@ -66,7 +66,7 @@ target.on('pingUrl', (url) => {
 
     const req = Request({// eslint-disable-line new-cap
       url: buildHatenaBookmarkJsonLiteUrl(url),
-    }).get();
+    });
     req.on('complete', (response) => {
       if (response.status !== 200 || !response.json) { return; }
       const count = Number(response.json.count);
@@ -76,6 +76,7 @@ target.on('pingUrl', (url) => {
       };
       emit(target, 'updateBadge', url, count);
     });
+    req.get();
   }
 });
 
