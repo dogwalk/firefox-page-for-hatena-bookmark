@@ -49,7 +49,7 @@ function cachedCount(bookmarks, url) {
       !url ||
       !bookmarks.has(url) ||
       !bookmarks.get(url).updatedAt ||
-      bookmarks.get(url).updatedAt + expireThreshold < Date.now ||
+      bookmarks.get(url).updatedAt + expireThreshold < Date.now() ||
       !isNumber(bookmarks.get(url).count)
   ) {
     return null;
