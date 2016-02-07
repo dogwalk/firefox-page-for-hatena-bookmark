@@ -44,6 +44,25 @@ target.on('updateBadge', (url, piece) => {
   }
 });
 
+/**
+  * This method has side effect!!!
+  *
+  * @param bookmarks {Map} bookmarks
+  * @param expireDuration {number} expire duration (millisecond)
+  * @param referenceTime {number} Date.now()
+  */
+function expireBookmarks(bookmarks, expireDuration = expireThreshold, referenceTime = Date.now()) {
+  for (const [key, value] of bookmarks) {
+    if (value.updatedAt &&
+      isNumber(value.count) &&
+      value.updatedAt + expireDuration > referenceTime
+    ) {
+      continue;
+    }
+    bookmarks.delete(key);
+  }
+}
+
 function cachedCount(bookmarks, url) {
   if (!bookmarks ||
       !url ||
