@@ -1,6 +1,6 @@
 {
   "name": "firefox-page-for-hatena-bookmark",
-  "description": "Show a detail page for Hatena Bookmark (http://b.hatena.ne.jp/). This is not official one.",
+  "description": "Show the page's bookmark counts for Hatena Bookmark. And jump to the detail page. This is not official one.",
   "version": "0.1.0",
   "author": {
     "name": "sanemat",
