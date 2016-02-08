@@ -10,6 +10,7 @@ const { EventTarget } = require('sdk/event/target');
 const { Request } = require('sdk/request');
 const { emit } = require('sdk/event/core');
 const simpleStorage = require('sdk/simple-storage');
+const storage = simpleStorage.storage;
 const isNumber = require('lodash.isnumber');
 const buildHatenaBookmarkJsonLiteUrl = require('./lib/build-hatena-bookmark-json-lite-url');
 const target = EventTarget();// eslint-disable-line new-cap
@@ -17,13 +18,14 @@ let button;
 let menuId;
 let page;
 let currentUrl;
+const expireThreshold = 10 * 60 * 1000;// 10 minutes
 
 /**
-  * bookmarks
-  * Map { url -> { updatedAt: time, count: number }}
+  * storage.bookmarks
+  * { url -> { updatedAt: time, count: number }}
   */
-if (!simpleStorage.storage.bookmarks) {
-  simpleStorage.storage.bookmarks = new Map();
+if (!storage.bookmarks) {
+  storage.bookmarks = {};
 }
 
 target.on('updateBadge', (url, piece) => {
@@ -43,17 +45,43 @@ target.on('updateBadge', (url, piece) => {
   }
 });
 
+/**
+  * This method has side effect!!!
+  *
+  * @param bookmarks {Object} bookmarks
+  * @param expireDuration {number} expire duration (millisecond)
+  * @param referenceTime {number} Date.now()
+  */
+function expireBookmarks(bookmarks, expireDuration = expireThreshold, referenceTime = Date.now()) {
+  if (!bookmarks) { return; }
+  for (let key of Object.keys(bookmarks)) {// eslint-disable-line prefer-const
+    const value = bookmarks[key];
+    if (value.updatedAt &&
+      isNumber(value.count) &&
+      value.updatedAt + expireDuration > referenceTime
+    ) {
+      continue;
+    }
+    delete bookmarks[key];// eslint-disable-line no-param-reassign
+  }
+}
+
+expireBookmarks(storage.bookmarks);
+simpleStorage.on('OverQuota', () => {
+  expireBookmarks(storage.bookmarks);
+});
+
 function cachedCount(bookmarks, url) {
   if (!bookmarks ||
       !url ||
-      !bookmarks.has(url) ||
-      !bookmarks.get(url).updatedAt ||
-      bookmarks.get(url).updatedAt + 10 * 60 * 1000 < Date.now ||
-      !isNumber(bookmarks.get(url).count)
+      !bookmarks[url] ||
+      !bookmarks[url].updatedAt ||
+      bookmarks[url].updatedAt + expireThreshold < Date.now() ||
+      !isNumber(bookmarks[url].count)
   ) {
     return null;
   }
-  return bookmarks.get(url).count;
+  return bookmarks[url].count;
 }
 
 target.on('pingUrl', (url) => {
@@ -62,7 +90,7 @@ target.on('pingUrl', (url) => {
     emit(target, 'updateBadge', url, '-');
     return;
   }
-  const cached = cachedCount(simpleStorage.storage.bookmarks, url);
+  const cached = cachedCount(storage.bookmarks, url);
   if (isNumber(cached)) {
     emit(target, 'updateBadge', url, cached);
   } else {
@@ -74,13 +102,13 @@ target.on('pingUrl', (url) => {
     req.on('complete', (response) => {
       if (response.status !== 200 || !response.json) { return; }
       const count = Number(response.json.count);
-      simpleStorage.storage.bookmarks.set(
-        url,
-        {
-          count,
-          updatedAt: Date.now(),
-        }
-      );
+      if (!storage.bookmarks) {
+        storage.bookmarks = {};
+      }
+      storage.bookmarks[url] = {
+        count,
+        updatedAt: Date.now(),
+      };
       emit(target, 'updateBadge', url, count);
     });
     req.get();
