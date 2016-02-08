@@ -54,7 +54,7 @@ target.on('updateBadge', (url, piece) => {
   */
 function expireBookmarks(bookmarks, expireDuration = expireThreshold, referenceTime = Date.now()) {
   if (!bookmarks) { return; }
-  for (const key of Object.keys(bookmarks)) {
+  for (let key of Object.keys(bookmarks)) {// eslint-disable-line prefer-const
     const value = bookmarks[key];
     if (value.updatedAt &&
       isNumber(value.count) &&
