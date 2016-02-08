@@ -1,3 +1,22 @@
+<a name="0.2.0"></a>
+# [0.2.0](https://github.com/dogwalk/firefox-page-for-hatena-bookmark/compare/v0.1.0...v0.2.0) (2016-02-08)
+
+* Expire bookmark counts.
+
+
+### Bug Fixes
+
+* **badge:** too many bookmarks ([8459a05](https://github.com/dogwalk/firefox-page-for-hatena-bookmark/commit/8459a05)), closes [#10](https://github.com/dogwalk/firefox-page-for-hatena-bookmark/issues/10)
+
+### Features
+
+* **expire:** expire bookmarks ([8dfff86](https://github.com/dogwalk/firefox-page-for-hatena-bookmark/commit/8dfff86))
+* **expire:** expire in boot sequence ([cfa4b6a](https://github.com/dogwalk/firefox-page-for-hatena-bookmark/commit/cfa4b6a)), closes [#8](https://github.com/dogwalk/firefox-page-for-hatena-bookmark/issues/8)
+* **expire:** support for over quote ([b4da15e](https://github.com/dogwalk/firefox-page-for-hatena-bookmark/commit/b4da15e)), closes [#9](https://github.com/dogwalk/firefox-page-for-hatena-bookmark/issues/9)
+* **expire:** use object instead of map ([690a0af](https://github.com/dogwalk/firefox-page-for-hatena-bookmark/commit/690a0af))
+
+
+
 <a name="0.1.0"></a>
 # [0.1.0](https://github.com/dogwalk/firefox-page-for-hatena-bookmark/compare/v0.0.1...v0.1.0) (2016-02-06)
 
