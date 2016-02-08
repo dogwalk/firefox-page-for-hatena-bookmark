@@ -21,11 +21,11 @@ let currentUrl;
 const expireThreshold = 10 * 60 * 1000;// 10 minutes
 
 /**
-  * bookmarks
-  * Map { url -> { updatedAt: time, count: number }}
+  * storage.bookmarks
+  * { url -> { updatedAt: time, count: number }}
   */
 if (!storage.bookmarks) {
-  storage.bookmarks = new Map();
+  storage.bookmarks = {};
 }
 
 target.on('updateBadge', (url, piece) => {
@@ -48,19 +48,21 @@ target.on('updateBadge', (url, piece) => {
 /**
   * This method has side effect!!!
   *
-  * @param bookmarks {Map} bookmarks
+  * @param bookmarks {Object} bookmarks
   * @param expireDuration {number} expire duration (millisecond)
   * @param referenceTime {number} Date.now()
   */
 function expireBookmarks(bookmarks, expireDuration = expireThreshold, referenceTime = Date.now()) {
-  for (const [key, value] of bookmarks) {
+  if (!bookmarks) { return; }
+  for (const key of Object.keys(bookmarks)) {
+    const value = bookmarks[key];
     if (value.updatedAt &&
       isNumber(value.count) &&
       value.updatedAt + expireDuration > referenceTime
     ) {
       continue;
     }
-    bookmarks.delete(key);
+    delete bookmarks[key];// eslint-disable-line no-param-reassign
   }
 }
 
@@ -72,14 +74,14 @@ simpleStorage.on('OverQuota', () => {
 function cachedCount(bookmarks, url) {
   if (!bookmarks ||
       !url ||
-      !bookmarks.has(url) ||
-      !bookmarks.get(url).updatedAt ||
-      bookmarks.get(url).updatedAt + expireThreshold < Date.now() ||
-      !isNumber(bookmarks.get(url).count)
+      !bookmarks[url] ||
+      !bookmarks[url].updatedAt ||
+      bookmarks[url].updatedAt + expireThreshold < Date.now() ||
+      !isNumber(bookmarks[url].count)
   ) {
     return null;
   }
-  return bookmarks.get(url).count;
+  return bookmarks[url].count;
 }
 
 target.on('pingUrl', (url) => {
@@ -100,13 +102,13 @@ target.on('pingUrl', (url) => {
     req.on('complete', (response) => {
       if (response.status !== 200 || !response.json) { return; }
       const count = Number(response.json.count);
-      storage.bookmarks.set(
-        url,
-        {
-          count,
-          updatedAt: Date.now(),
-        }
-      );
+      if (!storage.bookmarks) {
+        storage.bookmarks = {};
+      }
+      storage.bookmarks[url] = {
+        count,
+        updatedAt: Date.now(),
+      };
       emit(target, 'updateBadge', url, count);
     });
     req.get();
