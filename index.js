@@ -14,12 +14,12 @@ const storage = simpleStorage.storage;
 const isNumber = require('lodash.isnumber');
 const buildHatenaBookmarkJsonLiteUrl = require('./lib/build-hatena-bookmark-json-lite-url');
 const expireBookmarks = require('./lib/expire-bookmarks');
+const cachedCount = require('./lib/cached-count');
 const target = EventTarget();// eslint-disable-line new-cap
 let button;
 let menuId;
 let page;
 let currentUrl;
-const { expireThreshold } = require('./lib/constants');
 
 /**
   * storage.bookmarks
@@ -46,24 +46,10 @@ target.on('updateBadge', (url, piece) => {
   }
 });
 
-
 expireBookmarks(storage.bookmarks);
 simpleStorage.on('OverQuota', () => {
   expireBookmarks(storage.bookmarks);
 });
-
-function cachedCount(bookmarks, url) {
-  if (!bookmarks ||
-      !url ||
-      !bookmarks[url] ||
-      !bookmarks[url].updatedAt ||
-      bookmarks[url].updatedAt + expireThreshold < Date.now() ||
-      !isNumber(bookmarks[url].count)
-  ) {
-    return null;
-  }
-  return bookmarks[url].count;
-}
 
 target.on('pingUrl', (url) => {
   if (!url) { return; }
