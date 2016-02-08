@@ -18,7 +18,7 @@ let button;
 let menuId;
 let page;
 let currentUrl;
-const expireThreshold = 10 * 60 * 1000;// 10 minutes
+const { expireThreshold } = require('./lib/constants.js');
 
 /**
   * storage.bookmarks
