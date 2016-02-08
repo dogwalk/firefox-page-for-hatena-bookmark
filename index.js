@@ -13,12 +13,13 @@ const simpleStorage = require('sdk/simple-storage');
 const storage = simpleStorage.storage;
 const isNumber = require('lodash.isnumber');
 const buildHatenaBookmarkJsonLiteUrl = require('./lib/build-hatena-bookmark-json-lite-url');
+const expireBookmarks = require('./lib/expire-bookmarks');
 const target = EventTarget();// eslint-disable-line new-cap
 let button;
 let menuId;
 let page;
 let currentUrl;
-const { expireThreshold } = require('./lib/constants.js');
+const { expireThreshold } = require('./lib/constants');
 
 /**
   * storage.bookmarks
@@ -45,26 +46,6 @@ target.on('updateBadge', (url, piece) => {
   }
 });
 
-/**
-  * This method has side effect!!!
-  *
-  * @param bookmarks {Object} bookmarks
-  * @param expireDuration {number} expire duration (millisecond)
-  * @param referenceTime {number} Date.now()
-  */
-function expireBookmarks(bookmarks, expireDuration = expireThreshold, referenceTime = Date.now()) {
-  if (!bookmarks) { return; }
-  for (let key of Object.keys(bookmarks)) {// eslint-disable-line prefer-const
-    const value = bookmarks[key];
-    if (value.updatedAt &&
-      isNumber(value.count) &&
-      value.updatedAt + expireDuration > referenceTime
-    ) {
-      continue;
-    }
-    delete bookmarks[key];// eslint-disable-line no-param-reassign
-  }
-}
 
 expireBookmarks(storage.bookmarks);
 simpleStorage.on('OverQuota', () => {
