@@ -1,7 +1,7 @@
 {
   "name": "firefox-page-for-hatena-bookmark",
   "description": "Show the page's bookmark counts for Hatena Bookmark. And jump to the detail page. This is not official one.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "sanemat",
     "email": "o.gata.ken@gmail.com",
