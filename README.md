@@ -11,6 +11,7 @@
 ![menu](https://cloud.githubusercontent.com/assets/75448/12885171/2314d892-cea7-11e5-82f4-d8607a58de93.png)
 ![detail](https://cloud.githubusercontent.com/assets/75448/12885168/1e520c12-cea7-11e5-988c-defd65b80465.png)
 
+![pc](https://cloud.githubusercontent.com/assets/75448/12920068/74522104-cf8a-11e5-8f60-5d4d19e75cd6.png)
 
 ## Note
 
